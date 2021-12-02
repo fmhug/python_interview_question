@@ -271,7 +271,10 @@
         - [244.怎么在海量数据中找出重复次数最多的一个？](#244怎么在海量数据中找出重复次数最多的一个)
         - [245.判断数据是否在大量数据中](#245判断数据是否在大量数据中)
 
+
+
 <!-- /TOC -->
+
 # Python基础
 ## 文件操作
 ### 1.有一个jsonline格式的文件file.txt大小约为10K
@@ -290,6 +293,15 @@ def get_lines():
     with open('file.txt','rb') as f:
         for i in f:
             yield i
+```
+个人认为：还是设置下每次返回的行数较好，否则读取次数太多。
+```python
+def get_lines():
+    l = []
+    with open('file.txt','rb') as f:
+      data = f.readlines(60000)
+    l.append(data)
+    yield l
 ```
 Pandaaaa906提供的方法
 ```python
@@ -352,6 +364,7 @@ print(alist)
 ```python
 sorted(d.items(),key=lambda x:x[1])
 ```
+    x[0]代表用key进行排序；x[1]代表用value进行排序。
 ### 6.字典推导式
 ```python
 d = {key:value for (key,value) in iterable}
@@ -440,10 +453,14 @@ c. Python2里面继承object的是新式类，没有写父类的是经典类
 
 d. 经典类目前在Python里基本没有应用
 
+e. 保持class与type的统一对新式类的实例执行a.__class__与type(a)的结果是一致的，对于旧式类来说就不一样了。
+
+f. 对于多重继承的属性搜索顺序不一样新式类是采用广度优先搜索，旧式类采用深度优先搜索。
+
 ### 16.python中内置的数据结构有几种？
 a. 整型 int、 长整型 long、浮点型 float、 复数 complex
 
-b. 字符串 str、 列表 list、 元祖 tuple
+b. 字符串 str、 列表 list、 元组 tuple
 
 c. 字典 dict 、 集合 set
 
@@ -550,14 +567,14 @@ get_files("./",'.pyc')
 import os
 
 def pick(obj):
-    if ob.endswith(".pyc"):
+    if obj.endswith(".pyc"):
         print(obj)
     
 def scan_path(ph):
     file_list = os.listdir(ph)
     for obj in file_list:
         if os.path.isfile(obj):
-    pick(obj)
+            pick(obj)
         elif os.path.isdir(obj):
             scan_path(obj)
     
@@ -584,7 +601,7 @@ count = sum(range(0,101))
 print(count)
 ```
 ### 21.Python-遍历列表时删除元素的正确做法
-遍历在新在列表操作，删除时在原来的列表操作
+遍历在新的列表操作，删除时在原来的列表操作
 ```python
 a = [1,2,3,4,5,6,7,8]
 print(id(a))
@@ -665,7 +682,7 @@ letters = "".join(map(chr, range(ord('a'), ord('z') + 1)))
 ```
 
 ### 23.可变类型和不可变类型
-1,可变类型有list,dict.不可变类型有string，number,tuple.
+1,可变类型有list,dict.不可变类型有string,number,tuple.
 
 2,当进行修改操作时，可变类型传递的是内存中的地址，也就是说，直接修改内存中的值，并没有开辟新的内存。
 
@@ -678,7 +695,7 @@ is：比较的是两个对象的id值是否相等，也就是比较俩对象是�
 ### 25.求出列表所有奇数并构造新列表
 ```python
 a = [1,2,3,4,5,6,7,8,9,10]
-res = [ i for i in a if i%2==1]
+res = [i for i in a if i%2==1]
 print(res)
 ```
 ### 26.用一行python代码写出1+2+3+10248
@@ -696,13 +713,13 @@ print(num1)
 
 1.什么是LEGB?
 
-L： local 函数内部作用域
+L: local 函数内部作用域
 
 E: enclosing 函数内部与内嵌函数之间
 
 G: global 全局作用域
 
-B： build-in 内置作用
+B: build-in 内置作用
 
 python在函数里面的查找分为4种，称之为LEGB，也正是按照这是顺序来查找的
 ### 28.字符串 `"123"` 转换成 `123`，不使用内置api，例如 `int()`
@@ -756,14 +773,25 @@ class Solution:
             if target-nums[size] in d:
                 if d[target-nums[size]] <size:
                     return [d[target-nums[size]],size]
-                else:
-                    d[nums[size]] = size
-                size = size +1
+            else:
+                d[nums[size]] = size
+            size = size +1
 solution = Solution()
 list = [2,7,11,15]
 target = 9
 nums = solution.twoSum(list,target)
 print(nums)
+```
+
+```python
+
+class Solution(object):
+    def twoSum(self, nums, target):
+        for i in range(len(nums)):
+            num = target - nums[i]
+            if num in nums[i+1:]:
+                return [i, nums.index(num,i+1)]
+
 ```
 给列表中的字典排序：假设有如下list对象，alist=[{"name":"a","age":20},{"name":"b","age":30},{"name":"c","age":25}],将alist中的元素按照age从大到小排序 alist=[{"name":"a","age":20},{"name":"b","age":30},{"name":"c","age":25}]
 ```python
@@ -853,7 +881,7 @@ print(result)
 该列表只包含满足以下条件的值，元素为原始列表中偶数切片
 ```python
 list_data = [1,2,5,8,10,3,18,6,20]
-res = [x for x in list_data[::2] if x %2 ==0]
+res = [x for x in list_data[::2] if x % 2 ==0]
 print(res)
 ```
 ### 34.用一行代码生成[1,4,9,16,25,36,49,64,81,100]
@@ -1040,7 +1068,31 @@ class Array:
 ### 45.介绍Cython，Pypy Cpython Numba各有什么缺点
 Cython
 ### 46.请描述抽象类和接口类的区别和联系
+
+1.抽象类： 规定了一系列的方法，并规定了必须由继承类实现的方法。由于有抽象方法的存在，所以抽象类不能实例化。可以将抽象类理解为毛坯房，门窗，墙面的样式由你自己来定，所以抽象类与作为基类的普通类的区别在于约束性更强
+
+2.接口类：与抽象类很相似，表现在接口中定义的方法，必须由引用类实现，但他与抽象类的根本区别在于用途：与不同个体间沟通的规则，你要进宿舍需要有钥匙，这个钥匙就是你与宿舍的接口，你的舍友也有这个接口，所以他也能进入宿舍，你用手机通话，那么手机就是你与他人交流的接口
+
+3.区别和关联：
+
+1.接口是抽象类的变体，接口中所有的方法都是抽象的，而抽象类中可以有非抽象方法，抽象类是声明方法的存在而不去实现它的类
+
+2.接口可以继承，抽象类不行
+
+3.接口定义方法，没有实现的代码，而抽象类可以实现部分方法
+
+4.接口中基本数据类型为static而抽象类不是
+
 ### 47.Python中如何动态获取和设置对象的属性？
+
+```python
+if hasattr(Parent, 'x'):
+    print(getattr(Parent, 'x'))
+    setattr(Parent, 'x',3)
+print(getattr(Parent,'x'))
+```
+
+
 
 ## 内存管理与垃圾回收机制
 ### 48.哪些操作会导致Python内存溢出，怎么处理？
@@ -1286,7 +1338,7 @@ reduce(lambda x, y: x * y, [1, 2, 3, 4])  # 相当于 ((1 * 2) * 3) * 4
 
 输出字符串'a'的内建方法
 
-### 72.map(lambda x:xx，[y for y in range(3)])的输出？
+### 72.map(lambda x:x*x，[y for y in range(3)])的输出？
 
 ```
 [0, 1, 4]
@@ -1498,7 +1550,7 @@ yield就是保存当前程序执行状态。你用for循环的时候，每次取
 
 可变对象，该对象所指向的内存中的值可以被改变。变量（准确的说是引用）改变后，实际上其所指的值直接发生改变，并没有发生复制行为，也没有开辟出新的地址，通俗点说就是原地改变。
 
-Pyhton中，数值类型(int 和float)，字符串str、元祖tuple都是不可变类型。而列表list、字典dict、集合set是可变类型
+Pyhton中，数值类型(int 和float)，字符串str、元组tuple都是不可变类型。而列表list、字典dict、集合set是可变类型
 
 ### 91.Python的魔法方法
 
@@ -1508,7 +1560,7 @@ Pyhton中，数值类型(int 和float)，字符串str、元祖tuple都是不可�
 
 `__new__`才是实例化对象调用的第一个方法，它只取下cls参数，并把其他参数传给`__init___`.
 
-`___new__`很少使用，但是也有它适合的场景，尤其是当类继承自一个像元祖或者字符串这样不经常改变的类型的时候。
+`___new__`很少使用，但是也有它适合的场景，尤其是当类继承自一个像元组或者字符串这样不经常改变的类型的时候。
 
 `__call__`让一个类的实例像函数一样被调用
 
@@ -1553,17 +1605,132 @@ class MyCls(object):
 
 ## 正则表达式
 ### 94.请写出一段代码用正则匹配出ip？
+
 ### 95.a = “abbbccc”，用正则匹配为abccc,不管有多少b，就出现一次？
+    思路：不管有多少个b替换成一个
+
+    re.sub(r'b+', 'b', a)
 ### 96.Python字符串查找和替换？
-### 97.用Python匹配HTML g tag的时候，<.> 和 <.*?> 有什么区别
+    a、str.find()：正序字符串查找函数
+    函数原型：
+    str.find(substr [,pos_start [,pos_end ] ] )
+    返回str中第一次出现的substr的第一个字母的标号，如果str中没有substr则返回-1，也就是说从左边算起的第一次出现的substr的首字母标号。
+
+    参数说明：
+    str：代表原字符串
+    substr：代表要查找的字符串
+    pos_start：代表查找的开始位置，默认是从下标0开始查找
+    pos_end：代表查找的结束位置
+
+    例子：
+    'aabbcc.find('bb')' # 2
+
+    b、str.index()：正序字符串查找函数
+    index()函数类似于find()函数，在Python中也是在字符串中查找子串第一次出现的位置，跟find()不同的是，未找到则抛出异常。
+
+    函数原型：
+    str.index(substr [, pos_start, [ pos_end ] ] )
+
+    参数说明：
+    str：代表原字符串
+    substr：代表要查找的字符串
+    pos_start：代表查找的开始位置，默认是从下标0开始查找
+    pos_end：代表查找的结束位置
+
+    例子：
+    'acdd l1 23'.index(' ') # 4
+
+    c、str.rfind()：倒序字符串查找函数
+
+    函数原型：
+    str.rfind( substr [, pos_start [,pos_ end ] ])
+    返回str中最后出现的substr的第一个字母的标号，如果str中没有substr则返回-1，也就是说从右边算起的第一次出现的substr的首字母标号。
+
+    参数说明：
+    str：代表原字符串
+    substr：代表要查找的字符串
+    pos_start：代表查找的开始位置，默认是从下标0开始查找
+    pos_end：代表查找的结束位置
+
+    例子：
+    'adsfddf'.rfind('d') # 5
+
+    d、str.rindex()：倒序字符串查找函数
+    rindex()函数类似于rfind()函数，在Python中也是在字符串中倒序查找子串最后一次出现的位置，跟rfind()不同的是，未找到则抛出异常。
+
+    函数原型：
+    str.rindex(substr [, pos_start, [ pos_end ] ] )
+
+    参数说明：
+    str：代表原字符串
+    substr：代表要查找的字符串
+    pos_start：代表查找的开始位置，默认是从下标0开始查找
+    pos_end：代表查找的结束位置
+
+    例子：
+     'adsfddf'.rindex('d') # 5
+
+    e、使用re模块进行查找和替换：
+函数 | 说明
+---|---
+re.match(pat, s) | 只从字符串s的头开始匹配，比如(‘123’, ‘12345’)匹配上了，而(‘123’,’01234’)就是没有匹配上，没有匹配上返回None，匹配上返回matchobject
+re.search(pat, s) | 从字符串s的任意位置都进行匹配，比如(‘123’,’01234’)就是匹配上了，只要s只能存在符合pat的连续字符串就算匹配上了，没有匹配上返回None，匹配上返回matchobject
+re.sub(pat,newpat,s) | re.sub(pat,newpat,s)	对字符串中s的包含的所有符合pat的连续字符串进行替换，如果newpat为str,那么就是替换为newpat,如果newpat是函数，那么就按照函数返回值替换。sub函数两个有默认值的参数分别是count表示最多只处理前几个匹配的字符串，默认为0表示全部处理；最后一个是flags，默认为0
+
+    f、使用replace()进行替换：
+    基本用法：对象.replace(rgExp,replaceText,max)
+
+    其中，rgExp和replaceText是必须要有的，max是可选的参数，可以不加。
+    rgExp是指正则表达式模式或可用标志的正则表达式对象，也可以是 String 对象或文字；
+    replaceText是一个String 对象或字符串文字；
+    max是一个数字。
+    对于一个对象，在对象的每个rgExp都替换成replaceText，从左到右最多max次。
+
+    s1='hello world'
+    s1.replace('world','liming')
+
+### 97.用Python匹配HTML tag的时候，<.*> 和 <.*?> 有什么区别
+    第一个代表贪心匹配，第二个代表非贪心；
+    ?在一般正则表达式里的语法是指的"零次或一次匹配左边的字符或表达式"相当于{0,1}
+    而当?后缀于*,+,?,{n},{n,},{n,m}之后，则代表非贪心匹配模式，也就是说，尽可能少的匹配左边的字符或表达式，这里是尽可能少的匹配.(任意字符)
+
+    所以：第一种写法是，尽可能多的匹配，就是匹配到的字符串尽量长，第二中写法是尽可能少的匹配，就是匹配到的字符串尽量短。
+    比如<tag>tag>tag>end，第一个会匹配<tag>tag>tag>,第二个会匹配<tag>。
 ### 98.正则表达式贪婪与非贪婪模式的区别？
+    贪婪模式：
+    定义：正则表达式去匹配时，会尽量多的匹配符合条件的内容
+    标识符：+，?，*，{n}，{n,}，{n,m}
+    匹配时，如果遇到上述标识符，代表是贪婪匹配，会尽可能多的去匹配内容
+
+    非贪婪模式：
+    定义：正则表达式去匹配时，会尽量少的匹配符合条件的内容 也就是说，一旦发现匹配符合要求，立马就匹配成功，而不会继续匹配下去(除非有g，开启下一组匹配)
+    标识符：+?，??，*?，{n}?，{n,}?，{n,m}?
+    可以看到，非贪婪模式的标识符很有规律，就是贪婪模式的标识符后面加上一个?
+
+    参考文章：https://dailc.github.io/2017/07/06/regularExpressionGreedyAndLazy.html
+
 ### 99.写出开头匹配字母和下划线，末尾是数字的正则表达式？
+    s1='_aai0efe00'
+    res=re.findall('^[a-zA-Z_]?[a-zA-Z0-9_]{1,}\d$',s1)
+    print(res)
+
 ### 100.正则表达式操作
 ### 101.请匹配出变量A 中的json字符串。
 ### 102.怎么过滤评论中的表情？
+    思路：主要是匹配表情包的范围，将表情包的范围用空替换掉
+```
+import re
+pattern = re.compile(u'[\uD800-\uDBFF][\uDC00-\uDFFF]')
+pattern.sub('',text)
+
+```
 ### 103.简述Python里面search和match的区别
+    match()函数只检测字符串开头位置是否匹配，匹配成功才会返回结果，否则返回None；
+    search()函数会在整个字符串内查找模式匹配,只到找到第一个匹配然后返回一个包含匹配信息的对象,该对象可以通过调用group()方法得到匹配的字符串,如果字符串没有匹配，则返回None。
+
 ### 104.请写出匹配ip的Python正则表达式
 ### 105.Python里match与search的区别？
+    见103题
 
 ## 系统编程
 ### 106.进程总结
@@ -1697,7 +1864,7 @@ def reader(q):
 
 def writer(q):
     print("writer 启动（%s),父进程为(%s)"%(os.getpid(),os.getpid()))
-    for i ini "itcast":
+    for i in "itcast":
         q.put(i)
 if __name__ == "__main__":
     print("(%s)start"%os.getpid())
@@ -1718,7 +1885,7 @@ if __name__ == "__main__":
 
 协程: 是一种用户态的轻量级线程，协程的调度完全由用户控制。协程拥有自己的寄存器上下文和栈。协程调度时，将寄存器上下文和栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器上下文和栈，直接操中栈则基本没有内核切换的开销，可以不加锁的访问全局变量，所以上下文的切换非常快。
 
-### 108.Python异常使用场景有那些？
+### 108.Python异步使用场景有那些？
 异步的使用场景:
 
 1、 不涉及共享资源，获对共享资源只读，即非互斥操作
@@ -1893,12 +2060,12 @@ GIL锁 全局解释器锁
 ###  119.线程是并发还是并行，进程是并发还是并行？
 线程是并发，进程是并行;
 
-进程之间互相独立，是系统分配资源的最小单位，同一个线程中的所有线程共享资源。
+进程之间互相独立，是系统分配资源的最小单位，同一个进程中的所有线程共享资源。
 
 ### 120.并行(parallel)和并发（concurrency)?
 并行： 同一时刻多个任务同时在运行
 
-不会在同一时刻同时运行，存在交替执行的情况。
+并发：不会在同一时刻同时运行，存在交替执行的情况。
 
 实现并行的库有： multiprocessing
 
@@ -2024,7 +2191,7 @@ ioloop: 对I/O 多路复用的封装,它实现一个单例
 什么是CORS？
 
 CORS是一个W3C标准,全称是“跨域资源共享"(Cross-origin resoure sharing).
-它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而客服了AJAX只能同源使用的限制。
+它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而克服了AJAX只能同源使用的限制。
 
 什么是CSRF？
 
@@ -2221,8 +2388,31 @@ Session采用的是在服务器端保持状态的方案，而Cookie采用的是�
 ## 爬虫
 ### 159.试列出至少三种目前流行的大型数据库
 ### 160.列举您使用过的Python网络爬虫所用到的网络数据包?
+
+requests, urllib,urllib2, httplib2
+
 ### 161.爬取数据后使用哪个数据库存储数据的，为什么？
+
 ### 162.你用过的爬虫框架或者模块有哪些？优缺点？
+
+Python自带：urllib,urllib2
+
+第三方：requests
+
+框架： Scrapy
+
+urllib 和urllib2模块都做与请求URL相关的操作，但他们提供不同的功能。
+
+urllib2: urllib2.urlopen可以接受一个Request对象或者url,(在接受Request对象时，并以此可以来设置一个URL的headers),urllib.urlopen只接收一个url。
+
+urllib 有urlencode,urllib2没有，因此总是urllib, urllib2常会一起使用的原因
+
+scrapy是封装起来的框架，他包含了下载器，解析器，日志及异常处理，基于多线程，twisted的方式处理，对于固定单个网站的爬取开发，有优势，但是对于多网站爬取100个网站，并发及分布式处理不够灵活，不便调整与扩展
+
+requests是一个HTTP库，它只是用来请求，它是一个强大的库，下载，解析全部自己处理，灵活性高
+
+Scrapy优点：异步，xpath，强大的统计和log系统，支持不同url。shell方便独立调试。写middleware方便过滤。通过管道存入数据库
+
 ### 163.写爬虫是用多进程好？还是多线程好？
 ### 164.常见的反爬虫和应对方法？
 ### 165.解析网页的解析器使用最多的是哪几个?
@@ -2455,17 +2645,48 @@ def fibs():
         
         
 def fibonacci(n):
-    fibs = fibs()
+    fibs_ = fibs()
     for _ in range(n):
-        next(fibs)
+        next(fibs_)
     return next(fibs)
+```
+
+**做缓存**
+
+```python
+def cache(fn):
+    cached = {}
+    def wrapper(*args):
+        if args not in cached:
+            cached[args] = fn(*args)
+        return cached[args]
+    wrapper.__name__ = fn.__name__
+    return wrapper
+
+@cache
+def fib(n):
+    if n < 2:
+        return 1
+    return fib(n-1) + fib(n-2)
+```
+
+**利用 funtools.lru_cache 做缓存**
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=32)
+def fib(n):
+    if n < 2:
+        return 1
+    return fib(n-1) + fib(n-2)
 ```
 
 #### Logarithmic
 
 **矩阵**
 
-```
+```python
 import numpy as np
 def fibonacci(n):
     return (np.matrix([[0, 1], [1, 1]]) ** n)[1, 1]
@@ -2489,8 +2710,72 @@ def fibonacci(n):
 ```
 
 ### 233.如何翻转一个单链表？
+
+```python
+class Node:
+    def __init__(self,data=None,next=None):
+        self.data = data
+        self.next = next
+        
+def rev(link):
+    pre = link
+    cur = link.next
+    pre.next = None
+    while cur:
+        temp  = cur.next
+        cur.next = pre
+        pre = cur
+        cur = tmp
+    return pre
+
+if __name__ == '__main__':
+    link = Node(1,Node(2,Node(3,Node(4,Node(5,Node(6,Node7,Node(8.Node(9))))))))
+    root = rev(link)
+    while root:
+        print(roo.data)
+        root = root.next
+```
+
+
+
 ### 234.青蛙跳台阶问题
+
+一只青蛙要跳上n层高的台阶，一次能跳一级，也可以跳两级，请问这只青蛙有多少种跳上这个n层台阶的方法？
+
+方法1：递归
+
+设青蛙跳上n级台阶有f(n)种方法，把这n种方法分为两大类，第一种最后一次跳了一级台阶，这类共有f(n-1)种，第二种最后一次跳了两级台阶，这种方法共有f(n-2)种，则得出递推公式f(n)=f(n-1) + f(n-2),显然f(1)=1,f(2)=2，这种方法虽然代码简单，但效率低，会超出时间上限
+
+```python
+class Solution:
+    def climbStairs(self,n):
+        if n ==1:
+            return 1
+        elif n==2:
+            return 2
+        else:
+            return self.climbStairs(n-1) + self.climbStairs(n-2)
+```
+
+方法2：用循环来代替递归
+
+```python
+class Solution:
+    def climbStairs(self,n):
+        if n==1 or n==2:
+            return n
+        a,b,c = 1,2,3
+        for i in range(3,n+1):
+            c = a+b
+            a = b
+            b = c
+        return c
+```
+
 ### 235.两数之和 Two Sum
+
+
+
 ### 236.搜索旋转排序数组 Search in Rotated Sorted Array
 ### 237.Python实现一个Stack的数据结构
 ### 238.写一个二分查找
@@ -2502,3 +2787,9 @@ def fibonacci(n):
 ### 243.一个大约有一万行的文本文件统计高频词
 ### 244.怎么在海量数据中找出重复次数最多的一个？
 ### 245.判断数据是否在大量数据中
+
+## 架构
+
+### [Python后端架构演进](<https://zhu327.github.io/2018/07/19/python%E5%90%8E%E7%AB%AF%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B/>)
+
+这篇文章几乎涵盖了python会用的架构，在面试可以手画架构图，根据自己的项目谈下技术选型和优劣，遇到的坑等。绝对加分
